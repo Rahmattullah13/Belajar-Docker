@@ -161,16 +161,112 @@ docker container rm containerId/namacontainer
 
 ### Melihat Container Log
 
-- Untuk melihat log aplikasi di container kita, kita bisa menggunakan perintah : 
+- Untuk melihat log aplikasi di container kita, kita bisa menggunakan perintah :
 
 ```bash
 docker container logs containerId/namacontainer
 ```
+
 - Atau jika ingin melihat log secara realtime, kita bisa gunakan perintah :
 
 ```bash
 docker container logs -f containerId/namacontainer
 ```
+
+## Docker Exec
+
+- Saat kita membuat container, aplikasi yang terdapat di dalam container hanya bisa diakses dari dalam container.
+- Oleh karena itu, kadang kita perlu masuk ke dalam container nya itu sendiri.
+- Untuk masuk ke dalam container, kita bisa menggunakan fitur Container Exec, dimana digunakan untuk mengeksekusi kode program yang terdapat di dalam container.
+
+### Masuk ke Container
+
+- Untuk masuk ke dalam container, kita bisa mencoba mengeksekusi program bash script yang terdapat di dalam container dengan bantuan Container Exec :
+
+```bash
+docker container exec -i -t containerId/namacontainer /bin/bash
+```
+
+atau
+
+```bash
+docker container exec -i -t containerId/namacontainer /bin/sh
+```
+
+atau
+
+```bash
+docker container exec -i -t containerId/namacontainer //bin/sh
+```
+
+- -i adalah argument interaktif, menjaga input tetap aktif.
+- -t adalah argument untuk alokasi pseudo-TTY(terminal akses)
+- Dan /bin/bash adalah contoh kode program yang terdapat di dalam container.
+
+## Container Port
+
+- Saat menjalankan container, container tersebut terisolasi di dalam Docker.
+- Artinya sistem Host(misal laptop kita), tidak bisa mengakses aplikasi yang ada di dalam container secara langsung, salah satu caranya adalah harus menggunakan Container Exec untuk masuk ke dalam container-nya.
+- Biasanya, sebuah aplikasi berjalan pada port tertentu, misal saat kita menjalankan aplikasi Redis, dia berjalan pada port 6379, kita bisa melihat port apa yang digunakan ketika melihat semua daftar container.
+
+### Port Forwarding
+
+- Docker memiliki kemampuan untuk melakukan port forwarding, yaitu meneruskan sebuah port yang terdapat di sistem Host-nya ke dalam Docker Container.
+- Cara ini cocok jiksa kita ingin mengekspos port yang terdapat di container ke luar melalui sistem Host-nya.
+
+#### Melakukan Port Forwarding
+
+- Untuk melakukan Port Forwading, kita bisa menggunakan perintah berikut ketika membuat container-nya:
+
+```bash
+docker container create --name namacontainer --publish posthost:portcontainer image:tag
+```
+
+- Jika kita ingin melakukan port forwarding lebih dari satu, kita bisa tambahkan dua kali parameter : **--publish**
+- --publish juga bisa disingkat menggunakan -p
+
+## Container Environment Variable
+
+- Saat membuat aplikasi, menggunakan Environment Variable adalah salah satu teknik agar konfigurasi aplikasi bida diubah secara dinamis.
+- Dengan menggunakan environment variable, kita bisa mengubah-ubah konfigurasi aplikasi, tanpa harus mengubah kode aplikasinya lagi.
+- Docker Container memiliki parameter yang bisa kita gunakan untuk mengirim environment variable ke aplikasi yang terdapat di dalam container.
+
+### Menambahkan Environment Variable
+
+- Untuk menambahkan environment variable, kita bisa menggunakan perintah --env atau -e, misal :
+
+```bash
+docker container create --name namacontainer --env KEY="value" --env KEY="value" image:tag
+
+contoh :
+
+docker container create --name contohmongo --publish 27017:27017 --env MONGO_INITDB_ROOT_USERNAME=eko --env MONGO_INITDB_ROOT_PASSWORD=eko mongo:latest
+```
+
+## Container Stats
+
+- Saat menjalankan beberapa container, di sistem Host, penggunaan resource seperti CPU dan Memory hanya terlihat digunakan oleh Docker saja.
+- Kadang kita ingin melihat detail dari penggunaan resource untuk tiap container-nya.
+- Untungnya docker memiliki kemampuan untuk melihat penggunaan resource dari tiap container yang sedang berjalan.
+- Kita bisa gunakan perintah :
+
+```bash
+docker container stats
+```
+
+contoh :
+
+![Container Stats](/assets/container-stats.png)
+
+## Container Resource Limit
+
+- Saat membuat container, secara default dia akan menggunakan semua CPU dan Memory yang diberikan ke DOcker (Mac dan Windows), dan akan menggunakan semua CPU dan Memory yang tersedia di sistem Host(Linux).
+- Jika terjadi kesalahan, misal container terlalu banyak memakan CPU dan Memory, maka bisa berdampak terhadap performa container lain, atau bahkan ke sistem host.
+- Oleh karena itu, ada baiknya ketika kita membuat container, kita memberikan resource limit terhadap container tersebut.
+
+### Memory
+
+- 
 
 ## Source
 
