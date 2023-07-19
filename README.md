@@ -1,5 +1,7 @@
 # Belajar Docker Pemula
 
+---
+
 ## Pengenalan Container
 
 ### Virtual Machine
@@ -19,6 +21,8 @@
 - Ukuran Container biasanya hanya hitungan MB, berbeda dengan VM yang bisa sampai GB karena di dalamnya ada sistem operasinya.
 
 ![VM Diagram](/assets/container_diagram.png)
+
+---
 
 ## Pengenalan Docker
 
@@ -53,6 +57,8 @@
 docker version
 ```
 
+---
+
 ## Docker Registry
 
 - Docker Registry adalah tempat kita menyimpan Docker Image.
@@ -67,6 +73,8 @@ docker version
 - Google Cloud Container Registry : [link](https://cloud.google.com/container-registry)
 - Amazon Elastic Container Registry : [link](https://aws.amazon.com/id/ecr)
 - Azure Container Registry : [link](https://azure.microsoft.com/en-us/services/container-registry)
+
+---
 
 ## Docker Image
 
@@ -95,6 +103,8 @@ docker image pull namaImage:tag
 ```bash
 docker image rm namaImage:tag
 ```
+
+---
 
 ## Docker Container
 
@@ -154,6 +164,8 @@ docker container stop containerId/namacontainer
 docker container rm containerId/namacontainer
 ```
 
+---
+
 ## Container Log
 
 - Kadang saat terjadi masalah dengan aplikasi yang terdapat di container, sering kali kita ingin melihat detail dari log aplikasinya.
@@ -172,6 +184,8 @@ docker container logs containerId/namacontainer
 ```bash
 docker container logs -f containerId/namacontainer
 ```
+
+---
 
 ## Docker Exec
 
@@ -203,6 +217,8 @@ docker container exec -i -t containerId/namacontainer //bin/sh
 - -t adalah argument untuk alokasi pseudo-TTY(terminal akses)
 - Dan /bin/bash adalah contoh kode program yang terdapat di dalam container.
 
+---
+
 ## Container Port
 
 - Saat menjalankan container, container tersebut terisolasi di dalam Docker.
@@ -225,6 +241,8 @@ docker container create --name namacontainer --publish posthost:portcontainer im
 - Jika kita ingin melakukan port forwarding lebih dari satu, kita bisa tambahkan dua kali parameter : **--publish**
 - --publish juga bisa disingkat menggunakan -p
 
+---
+
 ## Container Environment Variable
 
 - Saat membuat aplikasi, menggunakan Environment Variable adalah salah satu teknik agar konfigurasi aplikasi bida diubah secara dinamis.
@@ -242,6 +260,8 @@ contoh :
 
 docker container create --name contohmongo --publish 27017:27017 --env MONGO_INITDB_ROOT_USERNAME=eko --env MONGO_INITDB_ROOT_PASSWORD=eko mongo:latest
 ```
+
+---
 
 ## Container Stats
 
