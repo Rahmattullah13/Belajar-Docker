@@ -278,6 +278,8 @@ contoh :
 
 ![Container Stats](/assets/container-stats.png)
 
+---
+
 ## Container Resource Limit
 
 - Saat membuat container, secara default dia akan menggunakan semua CPU dan Memory yang diberikan ke DOcker (Mac dan Windows), dan akan menggunakan semua CPU dan Memory yang tersedia di sistem Host(Linux).
@@ -286,7 +288,7 @@ contoh :
 
 ### Memory
 
-- 
+-
 
 ## Source
 
