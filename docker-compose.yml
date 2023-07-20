@@ -1,0 +1,15 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongovolume
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongodata:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rifki
+      - MONGO_INITDB_ROOT_PASSWORD=rifki
+
+volumes:
+  mongodata:

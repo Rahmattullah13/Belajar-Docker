@@ -288,7 +288,136 @@ contoh :
 
 ### Memory
 
--
+- Saat membuat container, kita bisa menentukan jumlah memory yang bisa digunakan oleh container ini, dengan menggunakan perintah --memory diikuti dengan angka memory yang diperbolehkan untuk digunakan.
+- Kita bisa menambahkan ukuran dalam bentuk b (bytes), k (kilo bytes), m (mega bytes), atau g (giga bytes), misalnya 100m artinya 100 mega bytes.
+
+### CPU
+
+- Selain mengatur Memory, kita juga bisa menentukan berapa jumlah CPU yang bisa digunakan oleh container dengan parameter --cpus.
+- Jika kita set dengan nilai 1.5 artinya container bisa menggunakan satu dan setengah CPU core.
+
+**Contoh**
+
+```bash
+docker container create --name smallnginx --publish 8081:80 --memory 100m --cpus 0.5 nginx:latest
+```
+
+---
+
+## Bind Mounts
+
+- Bind Mounts merupakan kemampuan melakukan mounting(sharing) file atau folder yang terdapat di sistem host ke container yang terdapat di docker.
+- Fitur ini sangat berguna ketika misal kita ingin mengirimkan konfigurasi dari luar container, atau misal menyimpan data yang dibuat di aplikasi di dalam container ke dalam folder di sistem host.
+- Jika file atau folder tidak ada di sistem host, secara otomatis akan dibuat oleh Docker.
+- Untuk melakukan mounting, kita bisa menggunakan parameter --mount ketika membuat container.
+- Isi dari parameter --mounting memiliki aturan tersendiri.
+
+| Parameter   | Keterangan                                                                         |
+| :---------- | :--------------------------------------------------------------------------------- |
+| type        | Tipe mount, bind atau volume                                                       |
+| source      | Lokasi file atau folder di sistem host                                             |
+| destination | Lokasi file atau folder di container                                               |
+| readonly    | Jika ada, maka file atau folder hanya bisa dibaca di container, tidak bisa ditulis |
+
+## Melakukan Mounting
+
+- Untuk melakukan mounting, kita bisa menggunakan perintah berikut :
+
+```bash
+docker container create --name namacontainer --mount "type=bind, source=folder, destination=folder, readonly" image:tag
+```
+
+---
+
+## Docker Volume
+
+- Fitur Bind Mounts sudah ada sejak Docker versi awal, di versi terbaru direkomendasikan menggunakan Docker Volume.
+- Docker Volume mirip dengan Bind Mounts, bedanya adalah terdapat menagement Volume, dimana kita bisa menggunakan Volume, melihat daftar Volume, dan menghapus Volume.
+- Volume sendiri bisa dianggap storage yang digunakan untuk menyimpan data, bedanya dengan Bind Mounts, pada bind mounts, data disimpan pada sistem host, sedangkan pada volume data di manage oleh Docker
+
+### Melihat Docker Volume
+
+- Saat kita membuat container, dimanakah data di dalam container itu disimpan, secara default semua data container disimpan di dalam volume.
+- Jika kita coba melihat docker volume, kita akan lihat bahwa ada banyak volume yang sudah terbuat, walaupun kita belum pernah membuatnya sama sekali.
+- Kita bisa gunakan perintah berikut untuk melihat daftar volume :
+
+```bash
+docker volume ls
+```
+
+### Membuat Volume
+
+- Untuk membuat volume, kita bisa gunakan perintah :
+
+```bash
+docker volume create namavolume
+```
+
+### Menghapus Volume
+
+- Volume yang tidak digunakan oleh container bisa kita hapus, tapi jika volume digunakan oleh container, maka tidak bisa kita hapus sampai container nya di hapus terlebih dahulu.
+- Untuk menghapus volume, kita bisa gunakan perintah :
+
+```bash
+docker volume rm namavolume
+```
+
+---
+
+## Container Volume
+
+- Volume yang sudah kita buat, bisa kita gunakan di container.
+- Keuntungan menggunakan volume adalah, jika container kita hapus data akan tetap aman di volume.
+- Cara menggunakan volume di container sama dengan menggunakan bind mounts, kita bisa menggunakan parameter **--mount**, namun dengan menggunakan **type volume** dan **source name volume**.
+
+**Contoh**
+
+```bash
+docker container create --name mongovolume --publish 27019:27017 --mount "type=volume,source=mongodata,destination=/data/db" --env MONGO_INITDB_ROOT_USERNAME=username --env MONGO_INITDB_ROOT_PASSWORD=password mongo:latest
+```
+
+**Jika gagal terus, bisa menggunakan Docker Compose seperti ini**
+
+1. Buat file bernama docker-compose.yml di dalam direktori proyek Anda, dan masukkan konfigurasi berikut ke dalam file tersebut:
+
+```yml
+version: '3'
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongovolume
+    ports:
+      - '27019:27017'
+    volumes:
+      - mongodata:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rifki
+      - MONGO_INITDB_ROOT_PASSWORD=rifki
+
+volumes:
+  mongodata:
+```
+
+2. Jalankan perintah berikut untuk memulai container:
+
+```bash
+docker-compose up -d
+```
+
+---
+
+## Backup Volume
+
+- Sayangnya, sampai saat ini, tidak aada cara otomatis untuk melakukan backup volume yang sudah kita buat.
+- Namun kita bisa memanfaatkan container untuk melakukan backup data yang ada di dalam volume ke dalam archive seperti zip atau tar.gz.
+
+### Tahapan Melakukan Backup
+
+- Matikan container yang menggunakan volume yang ingin kita backup.
+- Buat container baru dengan dua mount, volume yang ingin kita backup, dan bind mount folder dari sistem host.
+- Lakukan backup menggunakan container dengan cara meng-archive isi volume, dan simpan di bind mount folder.
+- Isi file backup sekarang ada di folder sistem host.
+- Delete container yang kita gunakan untuk melakukan backup.
 
 ## Source
 
