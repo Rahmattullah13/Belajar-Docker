@@ -3,7 +3,8 @@ docker container stop mongovolume
 
 docker container create --name nginxbackup --mount "type=bind,source=/Users/khannedy/Developments/YOUTUBE/belajar-docker-dasar/backup,destination=/backup" --mount "type=volume,source=mongodata,destination=/data" nginx:latest
 
-docker container create --name nginxbackup --mount "type=bind,source=D:\backup,destination=/backup" --mount "type=volume,source=mongodata,destination=/data" nginx:latest
+docker container create --name nginxbackup --mount "type=bind,source=/c/Users/asus/OneDrive/Desktop/learn-docker/backup,destination=/backup" --mount "type=volume,source=mongodata,destination=/data" nginx:latest
+
 
 docker container start nginxbackup
 

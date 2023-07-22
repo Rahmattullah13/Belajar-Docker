@@ -419,6 +419,175 @@ docker-compose up -d
 - Isi file backup sekarang ada di folder sistem host.
 - Delete container yang kita gunakan untuk melakukan backup.
 
+### Menjalankan Container Secara Langsung
+
+- Melakukan backup secara manual agak sedikit ribet karena kita harus start container terlebih dahulu, setelah backup, hapus container nya lagi.
+- Kita bisa menggunakan perintah **run** untuk menjalankan perintah di container dan gunakan parameter --rm untuk melakukan otomatis remove container setelah perintahnya selesai berjalan.
+
+**Contoh**
+
+```bash
+docker container run --rm --name ubuntubackup --mount "type=bind,source=/Users/khannedy/Developments/YOUTUBE/belajar-docker-dasar/backup,destination=/backup" --mount "type=volume,source=mongodata,destination=/data" ubuntu:latest tar cvf /backup/backup-lagi.tar.gz /data
+```
+
+---
+
+## Restore Volume
+
+- Setelah melakukan backup volume ke dalam file archive, kita bisa menyimpan file archive backup tersebut ke tempat yang lebih aman, misal ke cloud storage.
+- Sekarang kita akan coba melakukan restore data backup ke volume baru, untuk memastikan data backup yang kita lakukan tidak corrupt.
+
+### Tahapan Melakukan Restore
+
+- Buat volume baru untuk lokasi restore data backup.
+- Buat container baru dengan dua mount, volume baru untuk restore backup, dan bind mount folder dari sistem host yang berisi file backup.
+- Lakukan restore menggunakan container dengan cara meng-extract isi backup file ke dalam volume.
+- Isi file backup sekarang sudah di restore ke volume.
+- Delete container yang kita gunakan untuk melakukan restore.
+- Volume baru yang berisi data backup siap digunakan oleh container baru.
+
+---
+
+## Docker Network
+
+- Saat kita membuat container di docker, secara default container akan saling terisolasi satu sama lain, jadi jika kita mencoba memanggil antar container, bisa dipastikan bahwa kita tidak bisa melakukannya.
+- Docker memiliki fitur Network yang bisa digunakan untuk membuat jaringan di dalam Docker.
+- Dengan menggunakan Network, kita bisa mengkoneksikan container dengan container lain dalam satu Network yang sama.
+- Jika beberapa container terdapat pada satu Network yang sama, maka secara otomatis container tersebut bisa saling berkomunkasi.
+
+### Network Driver
+
+- Saat kita membuat Network di Docker, kita perlu menentukan driver yang ingin kita gunakan, ada banyak driver yang bisa kita gunakan, tapi kadang ada syarat sebuah driver network bisa kita gunakan.
+- bridge, yaitu driver yang digunakan untuk membuat network secara virtual yang memungkinkan container yang terkoneksi di bridge network yang sama saling berkomunikasi.
+- host, yaitu driver yang digunakan untuk membuat network yang sama dengan sistem host. host hanya jalan di Docker Linux, tidak bisa digunakan di MAC atau Windows.
+- none, yaitu driver untuk membuat network yang tidak bisa berkomunikasi.
+
+### Melihat Network
+
+- Untuk melihat network di Docker, kita bisa gunakan perintah:
+
+```bash
+docker network ls
+```
+
+### Membuat Network
+
+- Untuk membuat network baru, kita bisa menggunakan perintah:
+
+```bash
+docker network create --driver namadriver namanetwork
+```
+
+### Menghapus Network
+
+- Untuk menghapus Network, kita bisa gunakan perintah:
+
+```bash
+docker network rm namanetwork
+```
+
+- Network tidak bisa dihapus jika sudah digunakan oleh container. Kita harus menghapus containernya terlebih dahulu dari Network.
+
+---
+
+## Container Network
+
+- Setelah kita membuat Network, kita bisa menambahkan container ke network.
+- Container yang terdapat di dalam network yang sama bisa saling berkomunikasi(tergantung jenis driver network nya).
+- Container bisa mengakses container lain dengan menyebutkan hostname dari container nya, yaitu nama container nya.
+
+### Membuat Container dengan Network
+
+- Untuk menambahkan container ke network, kita bisa menambahkan perintah --network ketika membuat container, misal :
+
+```bash
+docker container create --name namacontainer --network namanetwork image:tag
+```
+
+### Menghapus Container dari Network
+
+- Jika diperlukan, kita juga bisa menghapus container dari network dengan perintah :
+
+```bash
+docker network disconnect namanetwork namacontainer
+```
+
+---
+
+## Inspect
+
+- Setelah kita men-download image, atau membuat network, volume dan container. Kadang kita ingin melihat detail dari tiap hal tersebut.
+- Misal kita ingin melihat detail dari image, perintah apa yang digunakan oleh image tersebut? Environment variable apa yang digunakan? Atau port apa yang digunakan?
+- Misal kita juga ingin melihat detail dari container, Volume apa yang digunakan? Environment variable apa yang digunakan? Port forwarding apa yang digunakan? dan lain-lain.
+- Docker memiliki fitur bernama inspect, yang bisa digunakan di image, container, volume dan network.
+- Dengan fitur ini, kita bisa melihat detail dari tiap hal yang ada di Docker.
+
+### Menggunakan Inspect
+
+- Untuk melihat detail dari image, gunakan :
+
+```bash
+docker image inspect namaimage
+```
+
+- Untuk melihat detail dari container, gunakan :
+
+```bash
+docker container inspect namacontainer
+```
+
+- Untuk melihat detail dari volume, gunakan :
+
+```bash
+docker volume inspect namavolume
+```
+
+- Untuk melihat detail dari network, gunakan :
+
+```bash
+docker network inspect namanetwork
+```
+
+---
+
+## Prune
+
+- Saat kita menggunakan Docker, kadang ada kalanya kita ingin membersihkan hal-hal yang sudah tidak digunakan lagi di Docker, misal container yang sudah di stop, image yang tidak digunakan oleh container, atau volume yang tidak digunakan oleh container.
+- Fitur untuk membersihkan secara otomatis di Docker bernama prune.
+- Hampir di semua perintah di Docker mendukung prune.
+
+### Perintah Prune
+
+- Untuk menghapus semua container yang sudah stop, gunakan :
+
+```bash
+docker container prune
+```
+
+- Untuk menghapus semua image yang tidak digunakan container, gunakan :
+
+```bash
+docker image prune
+```
+
+- Untuk menghapus semua network yang tidak digunakan container, gunakan :
+
+```bash
+docker network prune
+```
+
+- Untuk menghapus semua volume yang tidak digunakan container, gunakan :
+
+```bash
+docker volume prune
+```
+
+- Atau kita bisa menggunakan satu perintah untuk menghapus container, network dan image yang sudah tidak digunakan menggunakan perintah :
+
+```bash
+docker system prune
+```
+
 ## Source
 
 - [Programmer Zaman Now - Docker](https://www.youtube.com/watch?v=3_yxVjV88Zk&t=2271s)
